@@ -1,3 +1,4 @@
+import streamlit as st
 from pyecharts import options as opts
 from pyecharts.charts import Bar
 
@@ -18,15 +19,14 @@ def summarize_data(df, x_column, y_column, agg_function="sum"):
     """
 
     summarized_df = df.groupby(x_column).agg({y_column : agg_function})
-    return summarized_df.index.to_list(), summarized_df[y_column].to_list()
+    return summarized_df
 
 def create_bar_chart(x_axis_values,
                    y_axis_values,
                    x_label,
                    y_label,
                    title,
-                   sub_title,
-                   ):
+                   sub_title):
     
     b = (
         Bar()
@@ -36,17 +36,69 @@ def create_bar_chart(x_axis_values,
             title_opts=opts.TitleOpts(
                 title=title, subtitle=sub_title
             ),
+            xaxis_opts=opts.AxisOpts(name=x_label),
+            yaxis_opts=opts.AxisOpts(name=y_label)
         )
     )
 
     return b
 
-def plot_bar_chart(df, x_column, y_column, x_label, y_label, title, sub_title):
+def create_bar_chart_by_color(x_axis_values,
+                              y_axis_values_by_subset,
+                              x_label,
+                              y_label,
+                              title,
+                              sub_title,
+                              unique_color_col_vals):
+    b = (
+        Bar()
+        .add_xaxis(x_axis_values)
+        .set_global_opts(
+            title_opts=opts.TitleOpts(
+                title=title, subtitle=sub_title
+            ),
+            xaxis_opts=opts.AxisOpts(name=x_label),
+            yaxis_opts=opts.AxisOpts(name=y_label)
+        )
+    )
+
+    for color_col_label, y_axis_values in zip(unique_color_col_vals, y_axis_values_by_subset):
+        b = b.add_yaxis(str(color_col_label), y_axis_values, stack="stack1")
+
+    return b
+
+
+def plot_bar_chart(df, x_column, y_column, x_label, y_label, title, sub_title, color):
 
     if x_label == "": x_label = x_column
     if y_label == "": y_label = y_column
 
-    x_axis_values, y_axis_values = summarize_data(df, x_column, y_column)
-    bar_chart = create_bar_chart(x_axis_values, y_axis_values, x_label, y_label, title, sub_title)
+    if (df[y_column].dtype == float) or (df[y_column].dtype == int):
 
-    return bar_chart
+        if color is None:
+
+            summarized_data = summarize_data(df, x_column, y_column)
+            x_axis_values, y_axis_values = summarized_data.index.to_list(), summarized_data[y_column].to_list()
+            bar_chart = create_bar_chart(x_axis_values, y_axis_values, x_label, y_label, title, sub_title)
+
+            return bar_chart
+        
+        else:
+            unique_color_col_vals = df[color].unique()
+            df_subsets = [df[df[color] == item] for item in unique_color_col_vals]
+            df_subsets = [summarize_data(item, x_column, y_column) for item in df_subsets]
+            x_axis_values = df_subsets[0].index.to_list()
+            y_axis_values_by_subset = [item[y_column].to_list() for item in df_subsets]
+            bar_chart = create_bar_chart_by_color(x_axis_values, y_axis_values_by_subset, x_label, y_label, title, sub_title, unique_color_col_vals)
+
+            return bar_chart
+    
+    else:
+        error_message = f"Bar Chart Y-Axis expects column of type `float` or `int`. But found `{df[y_column].dtype}`"
+        plotting_error(error_message)
+
+        return None
+
+@st.experimental_dialog("Plotting Error!")
+def plotting_error(error_message):
+    st.write(error_message)

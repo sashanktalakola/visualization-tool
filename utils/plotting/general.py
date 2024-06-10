@@ -42,12 +42,20 @@ def display_plot_options_form(chart_type, df):
         y_axis_label = st.text_input(label="y-label",
                                 value="",
                                 label_visibility="collapsed")
+        
+        st.write("### Color &nbsp;`Optional`")
+        color = st.selectbox(label="Color",
+                            options=df.columns,
+                            index=None,
+                            label_visibility="collapsed")
+
         plot_options = {
             "x_column":x_axis_column,
             "y_column":y_axis_column,
             "x_label":x_axis_label,
             "y_label":y_axis_label,
             "title":title,
-            "sub_title":sub_title
+            "sub_title":sub_title,
+            "color": color
         }
         return plot_options

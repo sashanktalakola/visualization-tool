@@ -44,8 +44,10 @@ with st.sidebar:
                     df=df,
                     **plot_options
                 )
-                st.session_state["visualizations_counter"] += 1
-                st.session_state["visualizations"][st.session_state["visualizations_counter"]] = visualization
+
+                if visualization is not None:
+                    st.session_state["visualizations_counter"] += 1
+                    st.session_state["visualizations"][st.session_state["visualizations_counter"]] = visualization
 
 
 st.markdown("# Visualizations")
