@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from utils.plotting.bar_chart import plot_bar_chart
+from utils.plotting.general import plot
 from streamlit_echarts import st_pyecharts
 
 
@@ -70,18 +70,18 @@ with st.sidebar:
 
             submitted = st.form_submit_button()
             if submitted:
-                if visualization_type == "Bar Chart":
-                    visualization = plot_bar_chart(
-                        df,
-                        x_column=x_axis_column,
-                        y_column=y_axis_column,
-                        x_label=x_axis_label,
-                        y_label=y_axis_label,
-                        title=title,
-                        sub_title=sub_title
-                    )
-                    st.session_state["visualizations_counter"] += 1
-                    st.session_state["visualizations"][st.session_state["visualizations_counter"]] = visualization
+                visualization = plot(
+                    "bar-chart",
+                    df=df,
+                    x_column=x_axis_column,
+                    y_column=y_axis_column,
+                    x_label=x_axis_label,
+                    y_label=y_axis_label,
+                    title=title,
+                    sub_title=sub_title
+                )
+                st.session_state["visualizations_counter"] += 1
+                st.session_state["visualizations"][st.session_state["visualizations_counter"]] = visualization
 
 
 st.markdown("# Visualizations")
