@@ -57,17 +57,28 @@ with st.sidebar:
                                   value="",
                                   label_visibility="collapsed")
             
+            st.write("### X-Axis Label &nbsp;`Optional`")
+            x_axis_label = st.text_input(label="x-label",
+                                  value="",
+                                  label_visibility="collapsed")
+            
+            st.write("### Y-Axis Label &nbsp;`Optional`")
+            y_axis_label = st.text_input(label="y-label",
+                                  value="",
+                                  label_visibility="collapsed")
+            
 
             submitted = st.form_submit_button()
             if submitted:
                 if visualization_type == "Bar Chart":
                     visualization = plot_bar_chart(
-                        x_axis_values = list(df[x_axis_column]),
-                        y_axis_values = list(df[y_axis_column]),
-                        x_label = x_axis_column,
-                        y_label = y_axis_column,
-                        title = title,
-                        sub_title = sub_title
+                        df,
+                        x_column=x_axis_column,
+                        y_column=y_axis_column,
+                        x_label=x_axis_label,
+                        y_label=y_axis_label,
+                        title=title,
+                        sub_title=sub_title
                     )
                     st.session_state["visualizations_counter"] += 1
                     st.session_state["visualizations"][st.session_state["visualizations_counter"]] = visualization
