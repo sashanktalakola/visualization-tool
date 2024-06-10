@@ -71,7 +71,7 @@ with st.sidebar:
             submitted = st.form_submit_button()
             if submitted:
                 visualization = plot(
-                    "bar-chart",
+                    visualization_type,
                     df=df,
                     x_column=x_axis_column,
                     y_column=y_axis_column,
