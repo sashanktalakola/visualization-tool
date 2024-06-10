@@ -47,6 +47,16 @@ with st.sidebar:
                                          index=None,
                                          label_visibility="collapsed")
             
+            st.write("### Title &nbsp;`Optional`")
+            title = st.text_input(label="Title",
+                                  value="",
+                                  label_visibility="collapsed")
+            
+            st.write("### Sub-Title &nbsp;`Optional`")
+            sub_title = st.text_input(label="Sub-Title",
+                                  value="",
+                                  label_visibility="collapsed")
+            
 
             submitted = st.form_submit_button()
             if submitted:
@@ -56,8 +66,8 @@ with st.sidebar:
                         y_axis_values = list(df[y_axis_column]),
                         x_label = x_axis_column,
                         y_label = y_axis_column,
-                        title = "Top cloud providers 2018",
-                        sub_title = "2017-2018 Revenue"
+                        title = title,
+                        sub_title = sub_title
                     )
                     st.session_state["visualizations_counter"] += 1
                     st.session_state["visualizations"][st.session_state["visualizations_counter"]] = visualization
