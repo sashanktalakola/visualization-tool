@@ -10,16 +10,21 @@ def summarize_data(df, x_column, y_column, agg_function="sum"):
     2   Microsoft   12.1
     If dataframe provided was in the above format while plotting a bar chart we can just extract the values from the columns.
 
-    ID  Company     Revenue
-    1   Google      4.0
-    2   Microsoft   12.1
+    ID  Company     Revenue     -> summarize_data ->    ID  Company     Revenue
+    1   Google      4.0                                 1   Google      4.0
+    2   Microsoft   12.1                                2   Microsoft   19.3
     3   Google      7.2
     In such cases the y_column, in general we would expect the y_column to be aggregated. Hence we have summarize the dataframe
-    
     """
 
     summarized_df = df.groupby(x_column).agg({y_column : agg_function})
+    summarized_df.reset_index(drop=False, inplace=True)
     return summarized_df
+
+def summarize_data_by_extra_variable(df, x_column, y_column, extra_variable, agg_function="sum"):
+    extra_col_unique_vals = df[extra_variable].unique()
+    df_subsets = [df[df[extra_variable] == item] for item in extra_col_unique_vals]
+    return df_subsets
 
 def create_bar_chart(x_axis_values,
                    y_axis_values,
@@ -78,7 +83,7 @@ def plot_bar_chart(df, x_column, y_column, x_label, y_label, title, sub_title, c
         if color is None:
 
             summarized_data = summarize_data(df, x_column, y_column)
-            x_axis_values, y_axis_values = summarized_data.index.to_list(), summarized_data[y_column].to_list()
+            x_axis_values, y_axis_values = summarized_data[x_column].to_list(), summarized_data[y_column].to_list()
             bar_chart = create_bar_chart(x_axis_values, y_axis_values, x_label, y_label, title, sub_title)
 
             return bar_chart
@@ -98,7 +103,7 @@ def plot_bar_chart(df, x_column, y_column, x_label, y_label, title, sub_title, c
         plotting_error(error_message)
 
         return None
-
+    
 @st.experimental_dialog("Plotting Error!")
 def plotting_error(error_message):
     st.write(error_message)

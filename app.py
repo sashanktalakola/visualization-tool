@@ -30,7 +30,7 @@ with st.sidebar:
     else:
         st.write("### Select Visualization Type")
         visualization_type = st.selectbox(label="Visualization Type",
-                                            options=("Bar Chart", ),
+                                            options=("Bar Chart", "Box Plot"),
                                             index=None,
                                             label_visibility="collapsed")
         with st.form("add-visualization", border=False):
